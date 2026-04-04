@@ -104,4 +104,57 @@ namespace sogdanov
     }
     note_from->links.push_back(note_to);
   }
+  void cmd_halt(std::istream &in, std::ostream &, NoteMap &notes)
+  {
+    std::string from, to;
+    in >> from >> to;
+    if (!(in >> from >> to))
+    {
+      throw std::logic_error("no arguments");
+    }
+    auto it_from = notes.find(from);
+    auto it_to = notes.find(to);
+    if (it_from == notes.end() || !it_from->second)
+    {
+      throw std::logic_error("note not found");
+    }
+    if (it_to == notes.end() || !it_to->second)
+    {
+      throw std::logic_error("note not found");
+    }
+    NotePtr note_from = it_from->second;
+    NotePtr note_to = it_to->second;
+    std::vector<std::weak_ptr<Note>> &links = note_from->links;
+    for (auto it = links.begin(); it != links.end(); ++it)
+    {
+      if (it->lock() == note_to)
+      {
+        links.erase(it);
+        return;
+      }
+    }
+    throw std::logic_error("link not found");
+  }
+  void cmd_mind(std::istream &in, std::ostream &out, NoteMap &notes)
+  {
+    std::string name;
+    in >> name;
+    if (!(in >> name))
+    {
+      throw std::logic_error("no name");
+    }
+    auto it = notes.find(name);
+    if (it == notes.end() || !it->second)
+    {
+      throw std::logic_error("note not found");
+    }
+    for (const std::weak_ptr<Note> &w : it->second->links)
+    {
+      NotePtr target = w.lock();
+      if (target)
+      {
+        out << target->name << "\n";
+      }
+    }
+  }
 }
