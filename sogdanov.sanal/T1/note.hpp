@@ -11,4 +11,4 @@ namespace sogdanov {
     std::vector<std::weak_ptr<Note>> links;
   };
 }
-#endif 
+#endif
