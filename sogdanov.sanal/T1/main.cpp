@@ -3,8 +3,9 @@
 #include <unordered_map>
 #include <limits>
 #include "commands.hpp"
-int main() {
-  using cmd_t = void(*)(std::istream&, std::ostream&, sogdanov::NoteMap&);
+int main()
+{
+  using cmd_t = void (*)(std::istream &, std::ostream &, sogdanov::NoteMap &);
   std::unordered_map<std::string, cmd_t> cmds;
   cmds["note"] = sogdanov::cmd_note;
   cmds["line"] = sogdanov::cmd_line;
@@ -17,18 +18,25 @@ int main() {
   cmds["refresh"] = sogdanov::cmd_refresh;
   std::string cmd;
   sogdanov::NoteMap notes;
-  while (std::cin >> cmd) {
-    try {
+  while (std::cin >> cmd)
+  {
+    try
+    {
       cmds.at(cmd)(std::cin, std::cout, notes);
-    } catch (const std::out_of_range &) {
+    }
+    catch (const std::out_of_range &)
+    {
       std::cout << "<INVALID COMMAND>\n";
       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    } catch (const std::logic_error &) {
+    }
+    catch (const std::logic_error &)
+    {
       std::cout << "<INVALID COMMAND>\n";
       std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
   }
-  if (!std::cin.eof()) {
+  if (!std::cin.eof())
+  {
     std::cerr << "Bad input\n";
     return 1;
   }
